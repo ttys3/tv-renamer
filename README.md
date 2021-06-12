@@ -1,4 +1,11 @@
-**Build Status:** [![Build Status](https://travis-ci.org/mmstick/tv-renamer.png?branch=master)](https://travis-ci.org/mmstick/tv-renamer)
+# Notice
+
+the original repo has not been updated for 4 years.
+
+and the movie db api key is not working any more (even it work, it need your pay for subscription).
+
+we should migrated to https://www.themoviedb.org/documentation/api
+
 
 # Features
 
