@@ -97,9 +97,11 @@ pub enum TargetErr {
 pub fn collect_target(source: &Path, season_no: u8, episode_no: u16, arguments: &Arguments,
     tvdb_api: &tvdb::Tvdb, tvdb_series_id: u32)-> Result<PathBuf, TargetErr>
 {
-    let episode = tvdb_api.episode(tvdb_series_id, season_no as u32, episode_no as u32)
+    let ep = tvdb::data::EpisodeId::new(tvdb_series_id, "zh-CN");
+    let episode = tvdb_api.episode(ep)
         .map_err(|_| TargetErr::EpisodeDoesNotExist)?;
 
+    let epdata = &episode.data.unwrap();
     let mut filename = String::with_capacity(64);
     for pattern in &arguments.template {
         match *pattern {
@@ -107,13 +109,14 @@ pub fn collect_target(source: &Path, season_no: u8, episode_no: u16, arguments: 
             Token::Series           => filename.push_str(&arguments.series_name),
             Token::Season           => filename.push_str(&season_no.to_string()),
             Token::Episode          => filename.push_str(&episode_no.to_padded_string('0', arguments.pad_length as usize)),
-            Token::TvdbTitle        => filename.push_str(&episode.episode_name),
-            Token::TvdbFirstAired   => if let Some(date) = episode.first_aired.clone() {
-                filename.push_str(&date.year.to_string());
-                filename.push('-');
-                filename.push_str(&date.month.to_padded_string('0', 2));
-                filename.push('-');
-                filename.push_str(&date.day.to_padded_string('0', 2));
+            Token::TvdbTitle        => filename.push_str(epdata.episode_name.as_str()),
+            Token::TvdbFirstAired   => if let Some(date) = epdata.first_aired.clone() {
+                filename.push_str(date.as_str());
+                // filename.push_str(&date.year.to_string());
+                // filename.push('-');
+                // filename.push_str(&date.month.to_padded_string('0', 2));
+                // filename.push('-');
+                // filename.push_str(&date.day.to_padded_string('0', 2));
             }
         }
     }

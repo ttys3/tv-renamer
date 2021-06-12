@@ -2,6 +2,7 @@ extern crate tvdb;
 extern crate gtk;
 extern crate gdk;
 #[macro_use] extern crate quick_error;
+extern crate glib;
 
 mod backend;
 mod frontend {

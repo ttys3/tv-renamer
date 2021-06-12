@@ -70,11 +70,12 @@ fn rename_season(stderr: &mut io::Stderr, season: &Season, arguments: &Arguments
     let mut episode_no = episode_no;
 
     // TVDB
+    // https://github.com/thetvdb/v4-api
     let api = tvdb::Tvdb::new("0629B785CE550C8D");
-    let series_id = match api.search(&arguments.series_name, "en") {
-        Ok(result) => result[0].seriesid,
-        Err(_)     => {
-            let _ = write!(stderr, "tv-renamer: invalid TV series: {}\n", &arguments.series_name);
+    let series_id = match api.search(Some(&arguments.series_name), Some("en")) {
+        Ok(result) => result.data.unwrap()[0].id.unwrap(),
+        Err(err)     => {
+            let _ = write!(stderr, "tv-renamer: invalid TV series: {} err={}\n", &arguments.series_name, err);
             process::exit(1);
         }
     };
